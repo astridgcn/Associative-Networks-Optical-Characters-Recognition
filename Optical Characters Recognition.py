@@ -1,9 +1,23 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sat Nov 14 10:28:53 2020
+Created on Wed Sep 07 21:28:55 2022
 
 @author: As
 """
+# Remarques :
+# - Ce code n'est pas le plus optimisé, mais il est suffisamment simple pour illustrer le principe de l'algorithme.
+# - On pourrait par exemple récupérer les lettres d'un document texte et les stocker dans une liste.
+# - Il a été décidé (totalement arbitrairement) que les lettres bruitées ayant plus de 5 différences avec les autres lettres soient marquées comme non reconnues. 
+#   (Sinon, elle est reconnnue comme celle avec qui elle a le moins grand nombre de différences).
+
+# N'hésitez pas à proposer des améliorations et/ou extensions !
+
+# ----------------- LIBRAIRIES -----------------
+
+from random import shuffle
+import random
+from math import *
+
 # ----------------- LISTES -----------------
 
 N = 5  # nombre de lignes (et de colonnes) d'une forme
@@ -26,17 +40,17 @@ exemple_a_reconnaitre = [[True, False, True, False, True],
                          [True, False, False, False, True]]
 
 alphabet = \
-    [[[False, True, True, True, False],  # { A }
+    [[[False, True, True, True, False],   # { A }
       [True, False, False, False, True],
       [True, True, True, True, True],
       [True, False, False, False, True],
       [True, False, False, False, True]],
-     [[True, True, True, True, False],  # { B }
+     [[True, True, True, True, False],    # { B }
       [True, False, False, False, True],
       [True, True, True, True, False],
       [True, False, False, False, True],
       [True, True, True, True, False]],
-     [[False, True, True, True, True],  # { C }
+     [[False, True, True, True, True],    # { C }
       [True, False, False, False, False],
       [True, False, False, False, False],
       [True, False, False, False, False],
@@ -46,17 +60,17 @@ alphabet = \
       [True, False, False, False, True],
       [True, False, False, False, True],
       [True, True, True, True, False]],
-     [[True, True, True, True, True],  # { E }
+     [[True, True, True, True, True],     # { E }
       [True, False, False, False, False],
       [True, True, True, False, False],
       [True, False, False, False, False],
       [True, True, True, True, True]],
-     [[True, True, True, True, True],  # { F }
+     [[True, True, True, True, True],     # { F }
       [True, False, False, False, False],
       [True, True, True, False, False],
       [True, False, False, False, False],
       [True, False, False, False, False]],
-     [[True, True, True, True, True],  # { G }
+     [[True, True, True, True, True],     # { G }
       [True, False, False, False, False],
       [True, False, False, False, False],
       [True, False, False, False, True],
@@ -66,12 +80,12 @@ alphabet = \
       [True, True, True, True, True],
       [True, False, False, False, True],
       [True, False, False, False, True]],
-     [[False, False, True, False, False],  # { I }
+     [[False, False, True, False, False], # { I }
       [False, False, True, False, False],
       [False, False, True, False, False],
       [False, False, True, False, False],
       [False, False, True, False, False]],
-     [[False, False, True, True, True],  # { J }
+     [[False, False, True, True, True],   # { J }
       [False, False, False, True, False],
       [False, False, False, True, False],
       [False, False, False, True, False],
@@ -81,12 +95,12 @@ alphabet = \
       [True, True, True, False, False],
       [True, False, False, True, False],
       [True, False, False, False, True]],
-     [[True, False, False, False, False],  # { L }
+     [[True, False, False, False, False], # { L }
       [True, False, False, False, False],
       [True, False, False, False, False],
       [True, False, False, False, False],
       [True, True, True, True, True]],
-     [[True, True, False, True, True],  # { N }
+     [[True, True, False, True, True],    # { N }
       [True, False, True, False, True],
       [True, False, False, False, True],
       [True, False, False, False, True],
@@ -96,32 +110,32 @@ alphabet = \
       [True, False, True, False, True],
       [True, False, False, True, True],
       [True, False, False, False, True]],
-     [[False, True, True, True, False],  # { O }
+     [[False, True, True, True, False],   # { O }
       [True, False, False, False, True],
       [True, False, False, False, True],
       [True, False, False, False, True],
       [False, True, True, True, False]],
-     [[True, True, True, True, False],  # { P }
+     [[True, True, True, True, False],    # { P }
       [True, False, False, False, True],
       [True, True, True, True, False],
       [True, False, False, False, False],
       [True, False, False, False, False]],
-     [[True, True, True, True, True],  # { Q }
+     [[True, True, True, True, True],     # { Q }
       [True, False, False, False, True],
       [True, False, False, False, True],
       [True, False, False, True, True],
       [True, True, True, True, True]],
-     [[True, True, True, True, False],  # { R }
+     [[True, True, True, True, False],    # { R }
       [True, False, False, False, True],
       [True, True, True, True, False],
       [True, False, False, True, False],
       [True, False, False, False, True]],
-     [[False, True, True, True, True],  # { S }
+     [[False, True, True, True, True],    # { S }
       [True, False, False, False, False],
       [False, True, True, True, False],
       [False, False, False, False, True],
       [True, True, True, True, False]],
-     [[True, True, True, True, True],  # { T }
+     [[True, True, True, True, True],     # { T }
       [False, False, True, False, False],
       [False, False, True, False, False],
       [False, False, True, False, False],
@@ -151,7 +165,7 @@ alphabet = \
       [False, False, True, False, False],
       [False, False, True, False, False],
       [False, False, True, False, False]],
-     [[True, True, True, True, True],  # { Z }
+     [[True, True, True, True, True],     # { Z }
       [False, False, False, True, False],
       [False, False, True, False, False],
       [False, True, False, False, False],
@@ -160,7 +174,6 @@ alphabet = \
 # ----------------- FONCTIONS -----------------
 # Fonction de Heavyside
 f_activation = lambda x: 0 if x < 0 else 1
-
 
 # Fontion d'affichage
 def affiche_lettre(forme):
@@ -181,7 +194,7 @@ def affiche_forme(forme):
                 print(" ", end="")
         print("\n")
 
-# Initialiser poids diagonale à 0 quand i=j
+# Initialiser poids diagonale à 0 (quand i = j)
 for i in range(N_cell):
     for j in range(N_cell):
         if i == j:
@@ -275,7 +288,7 @@ def reconnaitre_lettre (lettre_a_reco) :
     affiche_lettre(lettre_a_reco)
     
     min = 25 #compteur nombre différences minimum
-    lettre = 0 #compteur lettre minimum diffiérences 
+    lettre = 0 #compteur lettre avec minimum de différences avec la lettre bruitée
     
     print ("Différences avec les autres lettres : \n")
     for l in range (26) : #compare à chaque lettre de l'alphabet 
@@ -288,8 +301,11 @@ def reconnaitre_lettre (lettre_a_reco) :
         if dif < min :
             min = dif  #NB : on aurait pu stocker toutes les différences dans une liste et prendre le minimum
             lettre = l
-            
-    print ("\nLa lettre bruitée semble être un", chr(lettre + 65), "avec seulement", min, "différences entre les 2 lettres.\n")                
+
+    if min > 5 : 
+        print("\nLa lettre ne semble pas être reconnue. Elle est trop éloignée des autres (plus de 5 différences). \nLa lettre dont elle s'approche le plus est le", chr(lettre + 65), "avec", min, "différences entre les deux lettres.\n")            
+    else :
+        print ("\nLa lettre bruitée semble être un", chr(lettre + 65), "avec seulement", min, "différences entre les deux lettres.\n")                
     print ("--------------------------------------------\n") 
     
 # N bruité  
@@ -305,6 +321,7 @@ G_bruite = [[True, False, True, True, True],
     
 reconnaitre_lettre(G_bruite)
 
+print ("--------------------------------------------\n") 
 K_bruite = [[True, False, False, False, False],  
             [True, False, False, True, True],
             [True, True, True, False, False],
@@ -312,3 +329,11 @@ K_bruite = [[True, False, False, False, False],
             [True, False, True, False, True]]
 
 reconnaitre_lettre(K_bruite)
+
+print ("--------------------------------------------\n") 
+import numpy
+import random
+test = [[bool(random.choice([True, False])) for _ in range(N)] for _ in range(N)]
+print(test)
+affiche_lettre(test)
+reconnaitre_lettre(test)
